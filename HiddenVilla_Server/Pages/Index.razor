@@ -15,6 +15,9 @@ Room: @Room.RoomName
 Price: @Room.Price
 <br />
 
+<input type="number" @bind-value="@Room.Price" @bind-value:event="oninput" />
+<input type="text"@bind-value="@Room.RoomName" @bind-value:event="oninput" />
+
 @code{
     Model.BlazorRoom Room = new Model.BlazorRoom()
     {
