@@ -1,5 +1,5 @@
 ﻿@using Model
-<div class="bg-light border p-2 col-5">
+<div class="bg-light border p-2 col-5 offset-1" @onclick="(args)=>AmenitySelectionChanged(args,Amenity.Name)">
     <h4 class="text-secondary">Amenity - @Amenity.Id</h4>
     @Amenity.Name<br />
     @Amenity.Description
@@ -10,4 +10,12 @@
     @code {
         [Parameter]
         public Amenity Amenity { get; set; }
+
+        [Parameter]
+        public EventCallback<string> OnAmeniySelection { get; set; }
+
+        protected async Task AmenitySelectionChanged(MouseEventArgs e, string name)
+        {
+            await OnAmeniySelection.InvokeAsync((string)name);
+        }
     }
