@@ -1,0 +1,24 @@
+﻿<div>
+    <div class="alert alert-info">@Title</div>
+    @*panggil parameter ChildContent di sini*@
+<div class="alert alert-success">
+    @if (ChildContent == null)
+    {
+        <span>Ini RenderFragmentnnya kosong</span>
+    }
+    else
+    {
+        <span>@ChildContent</span>
+    }
+
+</div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+
+    //Untuk renderfragment (mengisi konent diantara child component)
+    [Parameter]
+    public RenderFragment ChildContent { get; set; } 
+}
