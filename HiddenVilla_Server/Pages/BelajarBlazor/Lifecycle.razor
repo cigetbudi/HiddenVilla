@@ -1,0 +1,40 @@
+﻿
+
+@page "/lifecycle"
+
+<h3>Lifecycle</h3>
+
+<div class="border">
+    <LifecycleComponent></LifecycleComponent>
+</div>
+
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button><br />
+
+@foreach (var item in EventType)
+{
+    @item
+    <hr />
+}
+
+@code {
+    private int currentCount = 0;
+    List<string> EventType = new List<string>();
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
+    protected override void OnInitialized()
+    {
+        EventType.Add("Oninitialized dipanggil");
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        EventType.Add("OninitializedAsync dipanggil");
+        await Task.Delay(1000);
+    }
+
+}
