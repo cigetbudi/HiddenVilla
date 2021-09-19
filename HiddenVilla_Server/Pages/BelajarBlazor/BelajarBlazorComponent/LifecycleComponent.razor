@@ -11,12 +11,17 @@
 }
 
 @code {
+    [Parameter]
+    public int CountValue { get; set; }
     List<string> EventType = new List<string>();
 
-   
+
     protected override void OnInitialized()
     {
         EventType.Add("Child - Oninitialized dipanggil");
     }
-  
+    protected override void OnParametersSet()
+    {
+        EventType.Add("Child - OnParameterSet dipanggil");
+    }
 }
