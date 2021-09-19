@@ -10,8 +10,9 @@
     {
         <span>@ChildContent</span>
     }
-
+    @*anotherway to eventcallback*@
 </div>
+    <buttton class="btn btn-danger" @onclick="OnClickBtnMethod">Button to be clicked</buttton>
 </div>
 
 @code {
@@ -20,5 +21,9 @@
 
     //Untuk renderfragment (mengisi konent diantara child component)
     [Parameter]
-    public RenderFragment ChildContent { get; set; } 
+    public RenderFragment ChildContent { get; set; }
+
+    //anotherway to eventcallback
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClickBtnMethod { get; set; }
 }

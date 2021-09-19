@@ -2,14 +2,18 @@
 
 <h1 class="tect-danger">Parent ChildComponent</h1>
 
-<ChildComponent Title="Ketikan (title-child) ini diisi sebagai parameter dari Parent Component">
+<ChildComponent OnClickBtnMethod="ShowMessage" Title="Ketikan (title-child) ini diisi sebagai parameter dari Parent Component">
 
     Ketikan ini adalah RenderFragment dari Parent Component
 </ChildComponent>
 
-<ChildComponent Title="Ketikan (title-child) ini diisi sebagai parameter dari Parent Component ke 2">
-</ChildComponent>
+<p><b>@messageText</b></p>
 
-@code {
+@code { 
+    private string messageText = "";
 
+    private void ShowMessage(MouseEventArgs e)
+    {
+        messageText = "text dari parent";
+    }
 }
