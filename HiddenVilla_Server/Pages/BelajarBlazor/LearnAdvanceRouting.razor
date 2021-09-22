@@ -1,0 +1,26 @@
+﻿@page "/learnadvancerouting"
+@inject NavigationManager NavigationManager
+
+<h3>Learn Advance Routing</h3>
+<h4>Parameter1 : @Param1</h4>
+<h4>Parameter2 : @Param2</h4>
+
+<p>
+    <button class="btn btn-primary" @onclick="LoadParameter">
+        Load Parameters
+    </button>
+</p>
+
+@code {
+    private string Param1;
+    private string Param2;
+
+    private void LoadParameter()
+    {
+        var absoluteUri = new Uri(NavigationManager.Uri);
+        var queryParam = System.Web.HttpUtility.ParseQueryString(absoluteUri.Query);
+        Param1 = queryParam["Param1"];
+        Param2 = queryParam["Param2"];
+    }
+
+}
