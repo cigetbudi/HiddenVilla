@@ -7,7 +7,7 @@
     <ChildContent>Ketikan ini adalah RenderFragment dari Parent Component</ChildContent> 
     <DangerChildContent>DANGER ini adalah RenderFragment dari Parent Component </DangerChildContent>
 </ChildComponent>
-<AnotherChildComponent Placeholder="Masukkan Nama Room dari parent" ></AnotherChildComponent>
+<AnotherChildComponent AtributInputan="AtributInputanDariParent" ></AnotherChildComponent>
 
 <p><b>@messageText</b></p>
 
@@ -18,4 +18,12 @@
     {
         messageText = "text dari parent";
     }
+
+    [Parameter]
+    public Dictionary<string, object> AtributInputanDariParent { get; set; } = new Dictionary<string, object>()
+    {
+        {"required", "required" },
+        {"placeholder", "Initial Text dari parent" },
+        {"maxlength",3}
+    };
 }
