@@ -1,18 +1,19 @@
 ﻿@page "/ParentComponent"
 
 <h1 class="tect-danger">Parent ChildComponent</h1>
+<CascadingValue Value="@pesanUntukGrandChild">
+    <ChildComponent OnClickBtnMethod="ShowMessage" Title="Ketikan (title-child) ini diisi sebagai parameter dari Parent Component">
 
-<ChildComponent OnClickBtnMethod="ShowMessage" Title="Ketikan (title-child) ini diisi sebagai parameter dari Parent Component"
-                PesanUntukGrandChild="Pesan dari Parent">
-
-    <ChildContent>Ketikan ini adalah RenderFragment dari Parent Component</ChildContent> 
-    <DangerChildContent>DANGER ini adalah RenderFragment dari Parent Component </DangerChildContent>
-</ChildComponent>
+        <ChildContent>Ketikan ini adalah RenderFragment dari Parent Component</ChildContent>
+        <DangerChildContent>DANGER ini adalah RenderFragment dari Parent Component </DangerChildContent>
+    </ChildComponent>
+</CascadingValue>
 <AnotherChildComponent AtributInputan="AtributInputanDariParent" ></AnotherChildComponent>
 
 <p><b>@messageText</b></p>
 
 @code { 
+    private string pesanUntukGrandChild = "Pesan dari Parent cascade";
     private string messageText = "";
 
     private void ShowMessage(MouseEventArgs e)
