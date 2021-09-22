@@ -17,7 +17,14 @@
     <div class="row container">
         @foreach (var amenity in AmenityList)
         {
-            <IndividualAmenity OnAmeniySelection="AmenitySelectionChanged" Amenity="@amenity"></IndividualAmenity>
+        <IndividualAmenity OnAmeniySelection="AmenitySelectionChanged" Amenity="@amenity">
+            @*Assignment 6 start*@
+            <KesatuFragment>#1 </KesatuFragment>
+            <KeduaFragment>#2</KeduaFragment>
+            @*Assignment 6 end*@
+        </IndividualAmenity>
+            
+            
         }
     </div>
     <div class="col-12">
