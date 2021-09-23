@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Business.Repository.IRepository
 {
-    public interface IHotelRoomInterface
+    public interface IHotelRoomRepository
     {
         public Task<HotelRoomDTO> CreateHotelRoom(HotelRoomDTO hotelRoomDTO);
         public Task<HotelRoomDTO> UpddateHotelRoom(int roomId, HotelRoomDTO hotelRoomDTO);
