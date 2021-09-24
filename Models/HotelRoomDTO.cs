@@ -9,7 +9,7 @@ namespace Models
 {
     public class HotelRoomDTO
     {
-        public int id { get; set; }
+        public int Id { get; set; }
         [Required(ErrorMessage = "Masukkan nama ruangan")]
         public string Name { get; set; }
         [Required(ErrorMessage = "Masukkan Okupansi")]

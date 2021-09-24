@@ -10,7 +10,7 @@ namespace DataAccess.Data
     public class HotelRoom
     {
         [Key]
-        public int id { get; set; }
+        public int Id { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]
