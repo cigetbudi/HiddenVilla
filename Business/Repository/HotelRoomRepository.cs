@@ -20,6 +20,7 @@ namespace Business.Repository
             _mapper = mapper;
             _db = db;
         }
+        //public async Task<ViewModel> Action(ViewModel param)
         public async Task<HotelRoomDTO> CreateHotelRoom(HotelRoomDTO hotelRoomDTO)
         {
             //model parameter = _mapper.Map<ViewModel, Model>(parameter)
@@ -96,7 +97,7 @@ namespace Business.Repository
                     //valid
                     HotelRoom roomDetails = await _db.HotelRooms.FindAsync(roomId);
                     HotelRoom room = _mapper.Map<HotelRoomDTO, HotelRoom>(hotelRoomDTO, roomDetails);
-                    room.UpdatedBy = "";
+                    room.UpdatedBy = "admin";
                     room.UpdatedDate = DateTime.Now;
                     var updateRoom = _db.HotelRooms.Update(room);
                     await _db.SaveChangesAsync();
