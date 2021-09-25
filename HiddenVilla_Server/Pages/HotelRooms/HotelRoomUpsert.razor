@@ -8,18 +8,23 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                <EditForm Model="HotelRoomModel">
+                <EditForm Model="HotelRoomModel" OnValidSubmit="HandleHotelRoomUpsert">
+                    <DataAnnotationsValidator />
+                    @*<ValidationSummary />*@
                     <div class="form-group">
                         <label>Name</label>
                         <InputText @bind-Value="HotelRoomModel.Name" class="form-control"></InputText>
+                        <ValidationMessage For="()=>HotelRoomModel.Name"></ValidationMessage>
                     </div>
                     <div class="form-group">
                         <label>Occupancy</label>
                         <InputNumber @bind-Value="HotelRoomModel.Occupancy" class="form-control"></InputNumber>
+                        <ValidationMessage For="()=>HotelRoomModel.Occupancy"></ValidationMessage>
                     </div>
                     <div class="form-group">
                         <label>RegularRate</label>
                         <InputNumber @bind-Value="HotelRoomModel.RegularRate" class="form-control"></InputNumber>
+                        <ValidationMessage For="()=>HotelRoomModel.RegularRate"></ValidationMessage>
                     </div>
                     <div class="form-group">
                         <label>SqFt</label>
@@ -43,4 +48,9 @@
 @code {
     private HotelRoomDTO HotelRoomModel { get; set; } = new HotelRoomDTO();
     private string Title { get; set; } = "Tambah";
+
+    private async Task HandleHotelRoomUpsert()
+    {
+
+    }
 }
