@@ -1,0 +1,28 @@
+﻿@page "/blazorjs"
+@inject IJSRuntime JsRuntime
+
+<h3>BlazorJs</h3>
+
+<div class="row">
+    <button class="btn btn-secondary" @onclick="TestKonfirmasi">Test Confirm Button</button>
+</div>
+<div class="row">
+    @if (Konfirmasi)
+    {
+        <p>Terkonfirmasi</p>
+    }
+    else
+    {
+        <p>Belum Terkonfirmasi</p>
+    }
+</div>
+
+@code {
+
+    public string PesanKonfirmasi = "Yakin mau klik?";
+    private bool Konfirmasi { get; set; }
+    private async Task TestKonfirmasi()
+    {
+        Konfirmasi = await JsRuntime.InvokeAsync<bool>("confirm", PesanKonfirmasi);
+    }
+}
