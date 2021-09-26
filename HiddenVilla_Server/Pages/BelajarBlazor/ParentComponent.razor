@@ -3,7 +3,9 @@
 <h1 class="tect-danger">Parent ChildComponent</h1>
 <CascadingValue Value="@pesanUntukGrandChild" Name="PesanUntukGrandChild">
     <CascadingValue Value="@luckyNumber" Name="LuckyNumber">
-        <ChildComponent OnClickBtnMethod="ShowMessage" Title="Ketikan (title-child) ini diisi sebagai parameter dari Parent Component">
+        <ChildComponent @ref="childComp"
+                        OnClickBtnMethod="ShowMessage" 
+                        Title="Ketikan (title-child) ini diisi sebagai parameter dari Parent Component">
 
             <ChildContent>Ketikan ini adalah RenderFragment dari Parent Component</ChildContent>
             <DangerChildContent>DANGER ini adalah RenderFragment dari Parent Component </DangerChildContent>
@@ -14,7 +16,13 @@
 
 <p><b>@messageText</b></p>
 
+<div class="row">
+    <button class="btn btn-success" @onclick="()=>childComp.ShowToastrSuccess()">Show Alert Sukses</button>
+</div>
+
 @code { 
+    private ChildComponent childComp;
+
     private string pesanUntukGrandChild = "Pesan dari Parent cascade";
     private string luckyNumber = "5";
     private string messageText = "";
@@ -31,4 +39,6 @@
         {"placeholder", "Initial Text dari parent" },
         {"maxlength",3}
     };
+
+
 }

@@ -1,4 +1,6 @@
-﻿<div>
+﻿@inject IJSRuntime JsRuntime
+
+<div>
     <div class="alert alert-info">@Title</div>
 
     <div class="alert alert-success">
@@ -39,5 +41,9 @@
     [Parameter]
     public EventCallback<MouseEventArgs> OnClickBtnMethod { get; set; }
 
+    public async Task ShowToastrSuccess()
+    {
+        await JsRuntime.ToastrSukses("SUKSES, Ini Perintahnya dari Child");
+    }
 
 }
