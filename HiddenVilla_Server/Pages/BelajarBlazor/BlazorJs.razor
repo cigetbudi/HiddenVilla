@@ -4,13 +4,15 @@
 <h3>BlazorJs</h3>
 
 <div class="row">
-    <button class="btn btn-secondary" @onclick="TestKonfirmasi">Test Confirm Button</button>
+    <button class="btn btn-secondary" @onclick="(()=>TestKonfirmasi(PesanKonfirmasi))">Test Confirm Button</button>
 </div>
-<div class="row">
-    <button class="btn btn-primary" @onclick="TesSukses">Test Confirm Button</button>
+<div class="row mt-4">
+    <button class="btn btn-primary" @onclick="TesSukses">Test ToastrSukses</button>
+    <button class="btn btn-danger" @onclick="TesGagal">Test ToastrGagal</button>
 </div>
-<div class="row">
-    <button class="btn btn-danger" @onclick="TesGagal">Test Confirm Button</button>
+<div class="row mt-4">
+    <button class="btn btn-primary" @onclick="TesSuksesSwal">Test SwalSukses</button>
+    <button class="btn btn-danger" @onclick="TesGagalSwal">Test SwalGagal</button>
 </div>
 
 <div class="row">
@@ -28,9 +30,9 @@
 
     public string PesanKonfirmasi = "Yakin mau klik?";
     private bool Konfirmasi { get; set; }
-    private async Task TestKonfirmasi()
+    private async Task TestKonfirmasi(string message)
     {
-        Konfirmasi = await JsRuntime.InvokeAsync<bool>("confirm", PesanKonfirmasi);
+        Konfirmasi = await JsRuntime.InvokeAsync<bool>("confirm", message);
     }
 
     private async Task TesSukses()
@@ -39,10 +41,22 @@
         //await JsRuntime.InvokeVoidAsync("ShowToastr", "sukses");
 
         //Pesan kustom
-        await JsRuntime.InvokeVoidAsync("ShowToastr", "sukses","Telah Sukses");
+        //await JsRuntime.InvokeVoidAsync("ShowToastr", "sukses","Telah Sukses");
+
+        //menggunakan Runtime Helper
+        await JsRuntime.ToastrSukses("Berhasil Toastr");
     }
     private async Task TesGagal()
     {
-        await JsRuntime.InvokeVoidAsync("ShowToastr", "gagal","Gagal");
+        await JsRuntime.ToastrGagal("Gagal Toastr");
+    }
+
+    private async Task TesSuksesSwal()
+    {
+        await JsRuntime.InvokeVoidAsync("ShowSwal", "sukses","Berhasil !");
+    }
+    private async Task TesGagalSwal()
+    {
+        await JsRuntime.InvokeVoidAsync("ShowSwal", "gagal","Terjadi Error!");
     }
 }
