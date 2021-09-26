@@ -7,6 +7,13 @@
     <button class="btn btn-secondary" @onclick="TestKonfirmasi">Test Confirm Button</button>
 </div>
 <div class="row">
+    <button class="btn btn-primary" @onclick="TesSukses">Test Confirm Button</button>
+</div>
+<div class="row">
+    <button class="btn btn-danger" @onclick="TesGagal">Test Confirm Button</button>
+</div>
+
+<div class="row">
     @if (Konfirmasi)
     {
         <p>Terkonfirmasi</p>
@@ -24,5 +31,18 @@
     private async Task TestKonfirmasi()
     {
         Konfirmasi = await JsRuntime.InvokeAsync<bool>("confirm", PesanKonfirmasi);
+    }
+
+    private async Task TesSukses()
+    {
+        //Pesan bawaan common.js
+        //await JsRuntime.InvokeVoidAsync("ShowToastr", "sukses");
+
+        //Pesan kustom
+        await JsRuntime.InvokeVoidAsync("ShowToastr", "sukses","Telah Sukses");
+    }
+    private async Task TesGagal()
+    {
+        await JsRuntime.InvokeVoidAsync("ShowToastr", "gagal","Gagal");
     }
 }
