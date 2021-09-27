@@ -1,8 +1,10 @@
 ﻿@page "/hotel-room/create"
+@page "/hotel-room/edit/{Id:int}"
 @using Models
 @using Business.Repository.IRepository
 @inject IHotelRoomRepository HotelRoomRepository
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
 
 
 <div class="row mt-2 mb-5">
@@ -48,18 +50,61 @@
 </div>
 
 @code {
+    [Parameter]
+    public int? Id { get; set; }
+
     private HotelRoomDTO HotelRoomModel { get; set; } = new HotelRoomDTO();
     private string Title { get; set; } = "Tambah";
 
+    //GET
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id !=null)
+        {
+            //edit
+            Title = "Rubah";
+            HotelRoomModel = await HotelRoomRepository.GetHotelRoom(Id.Value);
+        }
+        else
+        {
+            //create
+            HotelRoomModel = new HotelRoomDTO();
+        }
+    }
+
+    //POST
     private async Task HandleHotelRoomUpsert()
     {
-        var roomDetailsByName = await HotelRoomRepository.IsRoomUnique(HotelRoomModel.Name);
-        if (roomDetailsByName !=null)
+        try
         {
-            //duplicate show error
-            return;
+            var roomDetailsByName = await HotelRoomRepository.IsRoomUnique(HotelRoomModel.Name, HotelRoomModel.Id);
+            if (roomDetailsByName != null)
+            {
+                //duplicate show error
+                await JsRuntime.ToastrGagal("Ruangan sudah ada!");
+                return;
+            }
+            if (HotelRoomModel.Id != 0 && Title == "Rubah")
+            {
+                //update
+                var updateRoomResult = await HotelRoomRepository.UpdateHotelRoom(HotelRoomModel.Id, HotelRoomModel);
+                JsRuntime.ToastrSukses("Ruangan telah diedit :) ");
+            }
+            else
+            {
+                //create
+
+                var createdResult = await HotelRoomRepository.CreateHotelRoom(HotelRoomModel);
+                JsRuntime.ToastrSukses("Ruangan telah dibuat :) ");
+            }
         }
-        var createdResult = await HotelRoomRepository.CreateHotelRoom(HotelRoomModel);
+        catch (Exception ex)
+        {
+
+            //log exceptions
+        }
+
+
         NavigationManager.NavigateTo("hotel-room");
     }
 }
