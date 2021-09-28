@@ -4,6 +4,7 @@
 @using Business.Repository.IRepository
 @using HiddenVilla_Server.Service.IService
 @inject IHotelRoomRepository HotelRoomRepository
+@inject IHotelImagesRepository HotelImagesRepository
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
 @inject IFileUpload FileUpload
@@ -78,6 +79,7 @@
     public int? Id { get; set; }
 
     private HotelRoomDTO HotelRoomModel { get; set; } = new HotelRoomDTO();
+    public HotelRoomImageDTO RoomImage { get; set; }
     private string Title { get; set; } = "Tambah";
 
     //GET
@@ -119,6 +121,7 @@
                 //create
 
                 var createdResult = await HotelRoomRepository.CreateHotelRoom(HotelRoomModel);
+                await TambahGambarRoom(createdResult);
                 JsRuntime.ToastrSukses("Ruangan telah dibuat :) ");
             }
         }
@@ -181,6 +184,19 @@
         {
 
             await JsRuntime.ToastrGagal(ex.Message);
+        }
+    }
+
+    private async Task TambahGambarRoom(HotelRoomDTO roomDetails)
+    {
+        foreach (var imageLink in HotelRoomModel.ImageLinks)
+        {
+            RoomImage = new HotelRoomImageDTO()
+            {
+                RoomId = roomDetails.Id,
+                RoomImageUrl = imageLink
+            };
+            await HotelImagesRepository.CreateHotelImage(RoomImage);
         }
     }
 }
