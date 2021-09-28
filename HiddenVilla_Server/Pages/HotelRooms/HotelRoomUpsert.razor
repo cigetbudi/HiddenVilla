@@ -90,6 +90,11 @@
             //edit
             Title = "Rubah";
             HotelRoomModel = await HotelRoomRepository.GetHotelRoom(Id.Value);
+            if (HotelRoomModel?.HotelRoomImages != null)
+            {
+                //ICOLLECTION LIST
+                HotelRoomModel.ImageLinks = HotelRoomModel.HotelRoomImages.Select(i => i.RoomImageUrl).ToList();
+            }
         }
         else
         {
@@ -114,6 +119,8 @@
             {
                 //update
                 var updateRoomResult = await HotelRoomRepository.UpdateHotelRoom(HotelRoomModel.Id, HotelRoomModel);
+
+
                 JsRuntime.ToastrSukses("Ruangan telah diedit :) ");
             }
             else
