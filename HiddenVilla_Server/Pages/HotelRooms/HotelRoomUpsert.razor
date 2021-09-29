@@ -119,8 +119,10 @@
             {
                 //update
                 var updateRoomResult = await HotelRoomRepository.UpdateHotelRoom(HotelRoomModel.Id, HotelRoomModel);
-
-
+                if (HotelRoomModel.ImageLinks!=null && HotelRoomModel.ImageLinks.Any())
+                {
+                    await TambahGambarRoom(updateRoomResult);
+                }
                 JsRuntime.ToastrSukses("Ruangan telah diedit :) ");
             }
             else
@@ -198,12 +200,16 @@
     {
         foreach (var imageLink in HotelRoomModel.ImageLinks)
         {
-            RoomImage = new HotelRoomImageDTO()
+            if (HotelRoomModel.HotelRoomImages==null || HotelRoomModel.HotelRoomImages.Where(x =>x.RoomImageUrl == imageLink).Count()==0)
             {
-                RoomId = roomDetails.Id,
-                RoomImageUrl = imageLink
-            };
-            await HotelImagesRepository.CreateHotelImage(RoomImage);
+                RoomImage = new HotelRoomImageDTO()
+                {
+                    RoomId = roomDetails.Id,
+                    RoomImageUrl = imageLink
+                };
+                await HotelImagesRepository.CreateHotelImage(RoomImage);
+            }
+
         }
     }
 }
