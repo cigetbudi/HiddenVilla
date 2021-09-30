@@ -44,6 +44,12 @@
                     <div class="form-group">
                         <InputFile OnChange="HandleImageUpload" multiple></InputFile>
                         <div class="row">
+                            @if (UploadImageStatus)
+                            {
+                                <div class="col-md-12">
+                                    <span><i class="fa fa-spinner"></i>gambar sedang diupload...</span>
+                                </div>
+                            }
                             @if (HotelRoomModel.ImageLinks!=null&& HotelRoomModel.ImageLinks.Count>0)
                             {
                                 int serial = 1;
@@ -75,12 +81,13 @@
 </div>
 
 @code {
-        [Parameter]
-        public int? Id { get; set; }
+    [Parameter]
+    public int? Id { get; set; }
     private HotelRoomDTO HotelRoomModel { get; set; } = new HotelRoomDTO();
     public HotelRoomImageDTO RoomImage { get; set; }
     private string Title { get; set; } = "Tambah";
     private List<string> NamaImageTerhapus { get; set; } = new List<string>();
+    private bool UploadImageStatus { get; set; } = false;
 
 
     //GET
@@ -129,22 +136,22 @@
                             var imageName = namaImageTerhapus.Replace($"RoomImages/", "");
                             var result = FileUpload.HapusFile(imageName);
                             await HotelImagesRepository.DeleteHotelImageByLink(namaImageTerhapus);
-                            }
                         }
-
-                        await TambahGambarRoom(updateRoomResult);
                     }
-                    JsRuntime.ToastrSukses("Ruangan telah diedit :) ");
-                }
-                else
-                {
-                    //create
 
-                    var createdResult = await HotelRoomRepository.CreateHotelRoom(HotelRoomModel);
-                    await TambahGambarRoom(createdResult);
-                    JsRuntime.ToastrSukses("Ruangan telah dibuat :) ");
+                    await TambahGambarRoom(updateRoomResult);
                 }
+                JsRuntime.ToastrSukses("Ruangan telah diedit :) ");
             }
+            else
+            {
+                //create
+
+                var createdResult = await HotelRoomRepository.CreateHotelRoom(HotelRoomModel);
+                await TambahGambarRoom(createdResult);
+                JsRuntime.ToastrSukses("Ruangan telah dibuat :) ");
+            }
+        }
         catch (Exception ex)
         {
 
@@ -157,6 +164,7 @@
 
     private async Task HandleImageUpload(InputFileChangeEventArgs e)
     {
+        UploadImageStatus = true;
         try
         {
             var images = new List<string>();
@@ -199,6 +207,7 @@
                     return;
                 }
             }
+            UploadImageStatus = false;
         }
         catch (Exception ex)
         {
