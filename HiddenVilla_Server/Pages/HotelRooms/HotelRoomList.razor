@@ -35,7 +35,8 @@
                             <td>@room.RegularRate.ToString("c")</td>
                             <td>@room.SqFt</td>
                             <td>
-                                <NavLink href="@($"hotel-room/edit/{room.Id}")">Edit</NavLink>
+                                <NavLink href="@($"hotel-room/edit/{room.Id}")" class="btn btn-primary">Edit</NavLink>
+                                <button class="btn btn-danger" @onclick="()=>HandleDelete(room.Id)" >Hapus</button>
                             </td>
                         </tr>
                     }
@@ -55,6 +56,7 @@
 
 @code {
     private IEnumerable<HotelRoomDTO> HotelRooms { get; set; } = new List<HotelRoomDTO>();
+    private int? DeleteRoomId { get; set; } = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,7 +65,25 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+
+    }
+
+    private async Task HandleDelete(int roomId)
+    {
+        DeleteRoomId = roomId;
         await JsRuntime.InvokeVoidAsync("ShowDeleteConfirmationModal");
     }
+
+    public async Task ConfirmDelete_Click(bool isConfirmed)
+    {
+        if (isConfirmed && DeleteRoomId!=null)
+        {
+            await HotelRoomRepository.DeleteHotelRoom(DeleteRoomId.Value);
+            await JsRuntime.ToastrSukses("Room telah berhasil dihapus");
+            HotelRooms = await HotelRoomRepository.GetAllHotelRooms();
+        }
+        await JsRuntime.InvokeVoidAsync("HideDeleteConfirmationModal");
+    }
+
 
 }
