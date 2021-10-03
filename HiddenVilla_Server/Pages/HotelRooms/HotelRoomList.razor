@@ -3,6 +3,7 @@
 @using Business.Repository.IRepository
 @inject IHotelRoomRepository HotelRoomRepository
 @inject IJSRuntime JsRuntime
+@inject HiddenVilla_Server.Service.IService.IFileUpload FIleUpload
 
 <div class="row mt-4">
     <div class="col-8">
@@ -52,7 +53,7 @@
     </div>
 </div>
 
-<DeleteConfirmation></DeleteConfirmation>
+<DeleteConfirmation ConfirmationChanged="ConfirmDelete_Click"></DeleteConfirmation>
 
 @code {
     private IEnumerable<HotelRoomDTO> HotelRooms { get; set; } = new List<HotelRoomDTO>();
@@ -78,6 +79,14 @@
     {
         if (isConfirmed && DeleteRoomId!=null)
         {
+
+            HotelRoomDTO hotelRoom = await HotelRoomRepository.GetHotelRoom(DeleteRoomId.Value);
+            foreach (var image in hotelRoom.HotelRoomImages)
+            {
+                var imageName = image.RoomImageUrl.Replace($"RoomImages/", "");
+                FIleUpload.HapusFile(imageName);
+            }
+
             await HotelRoomRepository.DeleteHotelRoom(DeleteRoomId.Value);
             await JsRuntime.ToastrSukses("Room telah berhasil dihapus");
             HotelRooms = await HotelRoomRepository.GetAllHotelRooms();

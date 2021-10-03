@@ -40,14 +40,16 @@ namespace Business.Repository
             if (roomDetails != null)
             {
                 var allimages = await _db.HotelRoomImages.Where(x => x.RoomId == roomId).ToListAsync();
-                foreach (var image in allimages)
-                {
-                    if (File.Exists(image.RoomImageUrl))
-                    {
-                        //HAPUS FILE FISIK
-                        File.Delete(image.RoomImageUrl);
-                    }
-                }
+                //dikomen karena tidak bisa digunakan FileUpload
+                //foreach (var image in allimages)
+                //{
+                //    if (File.Exists(image.RoomImageUrl))
+                //    {
+                //        //HAPUS FILE FISIK
+                //        File.Delete(image.RoomImageUrl);
+                //    }
+                //}
+
                 //HAPUS data di DB
                 _db.HotelRoomImages.RemoveRange(allimages);
 
