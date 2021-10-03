@@ -37,11 +37,43 @@
                         <label>SqFt</label>
                         <InputText @bind-Value="HotelRoomModel.SqFt" class="form-control"></InputText>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="height:250px;">
                         <label>Details</label>
-                        <InputTextArea @bind-Value="HotelRoomModel.Details" class="form-control"></InputTextArea>
+                        @*<InputTextArea @bind-Value="HotelRoomModel.Details" class="form-control"></InputTextArea>*@
+                        <BlazoredTextEditor @ref="@QuillHtml" Placeholder="Masukkan detail Ruangan">
+                            <ToolbarContent>
+                                <select class="ql-header">
+                                    <option selected=""></option>
+                                    <option value="1"></option>
+                                    <option value="2"></option>
+                                    <option value="3"></option>
+                                    <option value="4"></option>
+                                    <option value="5"></option>
+                                </select>
+                                <span class="ql-formats">
+                                    <button class="ql-bold"></button>
+                                    <button class="ql-italic"></button>
+                                    <button class="ql-underline"></button>
+                                    <button class="ql-strike"></button>
+                                </span>
+                                <span class="ql-formats">
+                                    <select class="ql-color"></select>
+                                    <select class="ql-background"></select>
+                                </span>
+                                <span class="ql-formats">
+                                    <button class="ql-list" value="ordered"></button>
+                                    <button class="ql-list" value="bullet"></button>
+                                </span>
+                                <span class="ql-formats">
+                                    <button class="ql-link"></button>
+                                </span>
+                            </ToolbarContent>
+                            <EditorContent>
+
+                            </EditorContent>
+                        </BlazoredTextEditor>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="padding-top:70px;">
                         <InputFile OnChange="HandleImageUpload" multiple></InputFile>
                         <div class="row">
                             @if (UploadImageStatus)
@@ -50,20 +82,20 @@
                                     <span><i class="fa fa-spinner"></i>gambar sedang diupload...</span>
                                 </div>
                             }
-                            @if (HotelRoomModel.ImageLinks!=null&& HotelRoomModel.ImageLinks.Count>0)
+                            @if (HotelRoomModel.ImageLinks != null && HotelRoomModel.ImageLinks.Count > 0)
                             {
                                 int serial = 1;
                                 foreach (var roomImage in HotelRoomModel.ImageLinks)
                                 {
-                            <div class="col-md-2 mt-3">
-                                <div class="room-image" style="background: url('@roomImage') 50% 50%;">
-                                    <span class="room-image-title">@serial</span>
-                                </div>
-                                <button type="button" @onclick="()=>HapusFoto(roomImage)" class="btn btn-outline-danger btn-block mt-4">
-                                    Hapus
-                                </button>
-                            </div>
-                                    
+                                    <div class="col-md-2 mt-3">
+                                        <div class="room-image" style="background: url('@roomImage') 50% 50%;">
+                                            <span class="room-image-title">@serial</span>
+                                        </div>
+                                        <button type="button" @onclick="()=>HapusFoto(roomImage)" class="btn btn-outline-danger btn-block mt-4">
+                                            Hapus
+                                        </button>
+                                    </div>
+
                                     serial++;
                                 }
                             }
@@ -88,12 +120,13 @@
     private string Title { get; set; } = "Tambah";
     private List<string> NamaImageTerhapus { get; set; } = new List<string>();
     private bool UploadImageStatus { get; set; } = false;
+    public BlazoredTextEditor QuillHtml { get; set; } = new BlazoredTextEditor();
 
 
     //GET
     protected override async Task OnInitializedAsync()
     {
-        if (Id !=null)
+        if (Id != null)
         {
             //edit
             Title = "Rubah";
@@ -103,12 +136,42 @@
                 //ICOLLECTION LIST
                 HotelRoomModel.ImageLinks = HotelRoomModel.HotelRoomImages.Select(i => i.RoomImageUrl).ToList();
             }
+
         }
         else
         {
             //create
             HotelRoomModel = new HotelRoomDTO();
         }
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+        bool loading = true;
+        while (loading)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(HotelRoomModel.Details))
+                {
+                    await this.QuillHtml.LoadHTMLContent(HotelRoomModel.Details);
+                }
+                loading = false;
+
+            }
+            catch
+            {
+
+                await Task.Delay(10);
+                loading = true;
+            }
+
+        }
+
+
+
     }
 
     //POST
@@ -126,10 +189,11 @@
             if (HotelRoomModel.Id != 0 && Title == "Rubah")
             {
                 //update
+                HotelRoomModel.Details = await QuillHtml.GetHTML();
                 var updateRoomResult = await HotelRoomRepository.UpdateHotelRoom(HotelRoomModel.Id, HotelRoomModel);
-                if (HotelRoomModel.ImageLinks!=null && HotelRoomModel.ImageLinks.Any())
+                if (HotelRoomModel.ImageLinks != null && HotelRoomModel.ImageLinks.Any())
                 {
-                    if (NamaImageTerhapus!=null && NamaImageTerhapus.Any())
+                    if (NamaImageTerhapus != null && NamaImageTerhapus.Any())
                     {
                         foreach (var namaImageTerhapus in NamaImageTerhapus)
                         {
@@ -146,7 +210,7 @@
             else
             {
                 //create
-
+                HotelRoomModel.Details = await QuillHtml.GetHTML();
                 var createdResult = await HotelRoomRepository.CreateHotelRoom(HotelRoomModel);
                 await TambahGambarRoom(createdResult);
                 JsRuntime.ToastrSukses("Ruangan telah dibuat :) ");
@@ -161,6 +225,16 @@
 
         NavigationManager.NavigateTo("hotel-room");
     }
+    //public void SetHTML()
+    //{
+    //    if (!string.IsNullOrEmpty(HotelRoomModel.Details))
+    //    {
+    //         this.QuillHtml.LoadHTMLContent(HotelRoomModel.Details);
+    //    }
+    //    //rerender
+    //    StateHasChanged();
+    //}
+
 
     private async Task HandleImageUpload(InputFileChangeEventArgs e)
     {
@@ -168,7 +242,7 @@
         try
         {
             var images = new List<string>();
-            if (e.GetMultipleFiles().Count > 0 )
+            if (e.GetMultipleFiles().Count > 0)
             {
                 foreach (var file in e.GetMultipleFiles())
                 {
@@ -190,7 +264,7 @@
                 }
                 if (images.Any())
                 {
-                    if (HotelRoomModel.ImageLinks!=null && HotelRoomModel.ImageLinks.Any())
+                    if (HotelRoomModel.ImageLinks != null && HotelRoomModel.ImageLinks.Any())
                     {
                         HotelRoomModel.ImageLinks.AddRange(images);
                     }
@@ -220,7 +294,7 @@
     {
         foreach (var imageLink in HotelRoomModel.ImageLinks)
         {
-            if (HotelRoomModel.HotelRoomImages==null || HotelRoomModel.HotelRoomImages.Where(x =>x.RoomImageUrl == imageLink).Count()==0)
+            if (HotelRoomModel.HotelRoomImages == null || HotelRoomModel.HotelRoomImages.Where(x => x.RoomImageUrl == imageLink).Count() == 0)
             {
                 RoomImage = new HotelRoomImageDTO()
                 {
@@ -238,7 +312,7 @@
         {
             var imageIndex = HotelRoomModel.ImageLinks.FindIndex(x => x == ImageLink);
             var imageName = ImageLink.Replace($"RoomImages/", "");
-            if (HotelRoomModel.Id==0 && Title == "Tambah")
+            if (HotelRoomModel.Id == 0 && Title == "Tambah")
             {
                 var result = FileUpload.HapusFile(imageName);
             }
