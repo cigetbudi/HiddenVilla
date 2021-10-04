@@ -1,6 +1,7 @@
 ﻿using HiddenVilla_Server.Service.IService;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,9 +13,11 @@ namespace HiddenVilla_Server.Service
     public class FileUpload : IFileUpload
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public FileUpload(IWebHostEnvironment webHostEnvironment)
+        private readonly IHttpContextAccessor _http;
+        public FileUpload(IWebHostEnvironment webHostEnvironment, IHttpContextAccessor http)
         {
             _webHostEnvironment = webHostEnvironment;
+            _http = http;
         }
         public bool HapusFile(string fileName)
         {
@@ -55,7 +58,9 @@ namespace HiddenVilla_Server.Service
                 {
                     memoryStream.WriteTo(fs);
                 }
-                var fullPath = $"RoomImages/{fileName}";
+                //http +:// + localhost +/
+                var url = $"{_http.HttpContext.Request.Scheme}://{_http.HttpContext.Request.Host.Value}/";
+                var fullPath = $"{url}RoomImages/{fileName}";
                 return fullPath;
             }
             catch (Exception ex)

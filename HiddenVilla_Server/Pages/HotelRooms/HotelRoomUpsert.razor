@@ -311,7 +311,7 @@
         try
         {
             var imageIndex = HotelRoomModel.ImageLinks.FindIndex(x => x == ImageLink);
-            var imageName = ImageLink.Replace($"RoomImages/", "");
+            var imageName = ImageLink.Replace($"{NavigationManager.BaseUri}RoomImages/", "");
             if (HotelRoomModel.Id == 0 && Title == "Tambah")
             {
                 var result = FileUpload.HapusFile(imageName);
