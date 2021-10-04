@@ -1,0 +1,91 @@
+﻿@page "/hotel-amnety"
+@using Models
+@using Business.Repository.IRepository
+@inject IHotelAmnetyRepository HotelAmnetyRepository
+@inject IJSRuntime JsRuntime
+
+
+<div class="row mt-4">
+    <div class="col-8">
+        <h4 class="card-title text-info">HOTEL AMNETIES</h4>
+    </div>
+    <div class="col-3 offset-1">
+        <NavLink href="/hotel-amnety/create" class="btn btn-info form-control">Tambah Amnety</NavLink>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Timing</th>
+                    <th>Description</th>
+                    <th>Icon Style</th>
+                    <th> </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (HotelAmneties.Any())
+                {
+                    foreach (var amnety in HotelAmneties)
+                    {
+                        <tr>
+                            <td>@amnety.Name</td>
+                            <td>@amnety.Timming</td>
+                            <td><i class="@amnety.IconStyle"></i></td>
+                            <td>
+                                <NavLink href="@($"hotel-amnety/edit/{amnety.Id}")" class="btn btn-primary">Edit</NavLink>
+                                <button class="btn btn-danger" @onclick="()=>HandleDelete(amnety.Id)">Hapus</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5"> Belum ada data</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<DeleteConfirmation IsParentComponentProcessing="IsProcessing" ConfirmationChanged="ConfirmDelete_Click"></DeleteConfirmation>
+
+@code {
+    private IEnumerable<HotelAmnetyDTO> HotelAmneties { get; set; } = new List<HotelAmnetyDTO>();
+    internal int? DeleteAmnetyId { get; set; } = null;
+    private bool IsProcessing { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        HotelAmneties = await HotelAmnetyRepository.GetAllHotelAmneties();
+    }
+
+
+
+    public async Task HandleDelete(int amnetyId)
+    {
+        DeleteAmnetyId = amnetyId;
+        await JsRuntime.InvokeVoidAsync("ShowDeleteConfirmationModal");
+    }
+
+    public async Task ConfirmDelete_Click(bool isConfirmed)
+    {
+        IsProcessing = true;
+        if (isConfirmed && DeleteAmnetyId !=null)
+        {
+            HotelAmnetyDTO hotelAmnety = await HotelAmnetyRepository.GetHotelAmnety(DeleteAmnetyId.Value);
+            await HotelAmnetyRepository.DeleteHotelAmnety(DeleteAmnetyId.Value);
+            await JsRuntime.ToastrSukses("Amenity telah berhasil dihapus");
+            HotelAmneties = await HotelAmnetyRepository.GetAllHotelAmneties();
+
+        }
+        await JsRuntime.InvokeVoidAsync("HideDeleteConfirmationModal");
+        IsProcessing = false;
+    }
+
+}

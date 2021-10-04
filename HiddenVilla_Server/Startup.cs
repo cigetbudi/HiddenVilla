@@ -35,6 +35,7 @@ namespace HiddenVilla_Server
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IHotelRoomRepository, HotelRoomRepository>();
+            services.AddScoped<IHotelAmnetyRepository, HotelAmnetyRepository>();
             services.AddScoped<IHotelImagesRepository, HotelImagseRepository>();
             services.AddScoped<IFileUpload, FileUpload>(); 
             services.AddRazorPages();

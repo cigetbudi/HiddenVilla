@@ -1,0 +1,127 @@
+﻿@page "/hotel-amnety/create"
+@page "/hotel-amnety/edit/{Id:int}"
+@using Models
+@using Business.Repository.IRepository
+@inject IHotelAmnetyRepository HotelAmnetyRepository
+@inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
+
+<div class="row mt-2 mb-5">
+    <h3 class="card-title text-info mb-3 ml-3">@Title Hotel Amenity </h3>
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <EditForm Model="@HotelAmnetyModel" OnValidSubmit="HandleAmnetyCreate">
+                    <DataAnnotationsValidator />
+                    <div class="form-group">
+                        <label>Name</label>
+                        <InputText @bind-Value="HotelAmnetyModel.Name" class="form-control"></InputText>
+                        <ValidationMessage For="()=>HotelAmnetyModel.Name"></ValidationMessage>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <InputTextArea @bind-Value="HotelAmnetyModel.Description" class="form-control"></InputTextArea>
+                        <ValidationMessage For="()=>HotelAmnetyModel.Description"></ValidationMessage>
+                    </div>
+                    <div class="form-group">
+                        <label>Timming</label>
+                        <InputText @bind-Value="HotelAmnetyModel.Timming" class="form-control"></InputText>
+                        <ValidationMessage For="()=>HotelAmnetyModel.Timming"></ValidationMessage>
+                    </div>
+                    <div class="form-group">
+                        <label>Icon Style</label>
+                        <InputText @bind-Value="HotelAmnetyModel.IconStyle" class="form-control"></InputText>
+                        <ValidationMessage For="()=>HotelAmnetyModel.IconStyle"></ValidationMessage>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-primary">@Title Amnety </button>
+                        <NavLink href="@($"hotel-amnety")" class="btn btn-secondary">Kembali</NavLink>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    internal HotelAmnetyDTO HotelAmnetyModel { get; set; } = new HotelAmnetyDTO();
+    internal string Title { get; set; } = "Tambah";
+    internal bool IsProcessingStart { get; set; } = false;
+
+    //GET
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != null)
+        {
+            //update
+            Title = "Rubah";
+            HotelAmnetyModel = await HotelAmnetyRepository.GetHotelAmnety(Id.Value);
+        }
+        else
+        {
+            //create
+            HotelAmnetyModel = new HotelAmnetyDTO();
+        }
+    }
+
+    //POST
+    internal async Task HandleAmnetyCreate()
+    {
+        try
+        {
+            IsProcessingStart = true;
+            if (HotelAmnetyModel.Id !=0 && Title== "Rubah")
+            {
+                //ngecek duplikasi nama
+                var amnetyDetailsByName = await HotelAmnetyRepository.IsAmnetyUnique(HotelAmnetyModel.Name);
+                if (amnetyDetailsByName !=null && amnetyDetailsByName.Id != HotelAmnetyModel.Id)
+                {
+                    await JsRuntime.ToastrGagal("Amenity sudah ada, pilih nama lain");
+                    return;
+                }
+                else
+                {
+                    //update amnety here. . . 
+                    var updateAmnetyResult = await
+                        HotelAmnetyRepository.UpdateHotelAmnety(HotelAmnetyModel.Id, HotelAmnetyModel);
+
+                    await JsRuntime.ToastrSukses("Amenity telah berhasil dirubah");
+
+                }
+            }
+            else
+            {
+                //ngecek duplikasi nama
+                var amnetyDetailsByName = await HotelAmnetyRepository.IsAmnetyUnique(HotelAmnetyModel.Name);
+                if (amnetyDetailsByName != null)
+                {
+                    await JsRuntime.ToastrGagal("Amenity sudah ada, pilih nama lain");
+                    return;
+                }
+                else
+                {
+                    //create amnety here. . . 
+                    var createdAmnetyResult = await HotelAmnetyRepository.CreateHotemAmnety(HotelAmnetyModel);
+                    HotelAmnetyModel = new HotelAmnetyDTO();
+                    await JsRuntime.ToastrSukses("Amenity telah berhasil dibuat");
+                }
+
+            }
+            NavigationManager.NavigateTo("hotel-amnety");
+            IsProcessingStart = false;
+
+        }
+        catch (Exception ex)
+        {
+
+            IsProcessingStart = false;
+        }
+
+    }
+}
